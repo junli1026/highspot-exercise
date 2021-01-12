@@ -1,0 +1,30 @@
+[
+    {
+        "type": "add_song",
+        "payload": {
+            "song_id": 40,
+            "playlist_id": 2
+        }
+    },
+    {
+        "type": "add_song",
+        "payload": {
+            "song_id": 39,
+            "playlist_id": 2
+        }
+    },
+    {
+        "type": "add_song",
+        "payload": {
+            "playlist_id": 2,
+            "song_id": 38
+        }
+    },
+    {
+        "type": "add_song",
+        "payload": {
+            "song_id": 37,
+            "playlist_id": 2
+        }
+    },
+]
