@@ -112,7 +112,6 @@ Or try to implement a Splitter that can divide a large json file into chunks of 
 This is also challenge because JSON is a nested data structure, but for this specific case, we have Users array, PlayList array and Songs array, which is very "flat", so should be doable.
 
 
-
 2. Data capacity -- sharding 
 
 Let's say we are now able to split a single large to many small files. The next problm we are facing is the total size is too large to fit in any single machine. We need to distribe the data into multiple machines. 
@@ -139,7 +138,6 @@ We can simply shard by hash(id) like the graph below.
 Further issue is about how to runtime exapand the data capacity, like from 3 datebase to 30 database on the fly. But this is something we should avoid by estimating the total data capacity.
 
 
-
 3. Data persistency
 
 So far our design is all in memory, that is, the database we are using is in-mempry objects. This is good from the perspective of performace, any change will be applied very fast(because everything is in memory).
@@ -148,22 +146,19 @@ But the distvantage is about potential data loss, thinking about if one of the d
 
 So we need to solve the data persistency.
 
-```
-3.1 Disk based storage
+- 3.1 Disk based storage
 
-Rrelationaly database. Our data model is very simple in this case, I believe most mature relational database should be enough.
+Relationaly database. Our data model is very simple in this case, I believe most mature relational database should be enough.
 
 Nosql is also a good choice, our case doesn't have join operation.
-```
 
-```
-3.1 In-Mempory + Write-Ahead-Log + Sanpshot
+
+- 3.2 In-Mempory + Write-Ahead-Log + Sanpshot
 
 Because of the speciality of this case, we can use in-memory and write-ahead-log and periodly snapshot to achive a high performce datastore.
 
 That is, for any "change" operation, we first append the opertaion to a WAL, then update the in-memory object. We periodly make a snapshot for current store. If the system is down, we can revover by Last-Snapshot + Write-Ahead-Log to revover to the right data.
 
-```
 
 
 4. High write traffic/throughput -- queue/message system
