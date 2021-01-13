@@ -13,7 +13,7 @@ Pleaes let me know if you meet any problem running the program.
 
 ```
 >> git clone https://github.com/junli1026/highspot-exercise
->> cd https://github.com/junli1026/highspot-exercise
+>> cd highspot-exercise
 
 # install .net 5.0 SDK (runtime included) on Ubuntu 20.10
 >> wget https://packages.microsoft.com/config/ubuntu/20.10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
