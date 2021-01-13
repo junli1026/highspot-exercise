@@ -91,7 +91,6 @@ The changes is defined like this
 
 For the problem of a very large single file, we need to be careful about the json parser, or any data parser. The case of loading everything into meory would exceed the maximum memory for a single machine.
 We need a parser that can read partial JSON file and get some output, then store the object into data store like database, then keep parsing the remaining data.
-
 Or try to implement a Splitter that can divide a large json file into chunks of small json files.
 
 ```
@@ -109,12 +108,12 @@ Or try to implement a Splitter that can divide a large json file into chunks of 
 
     }
 ```
-This is also challenge because JSON is a nested data structure, but for this specific case, we have Users array, PlayList array and Songs array, which is very "flat", so should be doable.
+JSON is a nested data structure, but for this specific case, we have Users array, PlayList array and Songs array, which is very "flat", so should be fine here.
 
 
 2. Data capacity -- sharding 
 
-Let's say we are now able to split a single large to many small files. The next problm we are facing is the total size is too large to fit in any single machine. We need to distribe the data into multiple machines. 
+Let's say we are now able to split a single large intoto many small files. The next problm we are facing is that the total size is too large to fit in any single machine. We need to distribe the data into multiple machines.
 
 We can simply shard by hash(id) like the graph below.
 
@@ -140,36 +139,34 @@ Further issue is about how to runtime exapand the data capacity, like from 3 dat
 
 3. Data persistency
 
-So far our design is all in memory, that is, the database we are using is in-mempry objects. This is good from the perspective of performace, any change will be applied very fast(because everything is in memory).
-
-But the distvantage is about potential data loss, thinking about if one of the database is down and then we lose all the changes.
+So far our system is all in memory, that is, the database is a list of in-mempry objects. This is good from the perspective of performace, any change will be applied very fast. But the distvantage is about data loss, thinking about if one of the database is down and then we lose all the changes.
 
 So we need to solve the data persistency.
 
 - 3.1 Disk based storage
 
-Relationaly database. Our data model is very simple in this case, I believe most mature relational database should be enough.
+Relationaly database is a choise. Our data model is very simple in this case, I believe most mature relational database should be enough.
 
 Nosql is also a good choice, our case doesn't have join operation.
 
 
 - 3.2 In-Mempory + Write-Ahead-Log + Sanpshot
 
-Because of the speciality of this case, we can use in-memory and write-ahead-log and periodly snapshot to achive a high performce datastore.
+Because of the speciality of this case, we can use in-memory and write-ahead-log and periodly snapshot to achieve a high performce datastore.
 
-That is, for any "change" operation, we first append the opertaion to a WAL, then update the in-memory object. We periodly make a snapshot for current store. If the system is down, we can revover by Last-Snapshot + Write-Ahead-Log to revover to the right data.
+That is, for any "change" operation, we first append the opertaion to a WAL, then update the in-memory object. We periodly make a snapshot for current memory image. If the system is down, we can revover by Last-Snapshot + Write-Ahead-Log to revover to the right point.
 
 
 
 4. High write traffic/throughput -- queue/message system
 
-Let's say we solve all the data capacity issue by sharding and data persistency. We still need to think about high through/traffic issue.
+Let's say we solve all the data capacity issue by sharding and data persistency problem. We still need to think about high through/traffic issue.
 
-Think about if our average daily "change" request is about 100Gb but it is not evenly distributed. That is 90Gb of the "change" requrest arrive between 1:00pm --- 2:00pm.
+Think about if our average daily "change" requests are about 100Gb/day, but it is not evenly distributed. That is, 90Gb of the equrests arrive between 1:00pm --- 1:30pm.
 
-Although our system has enough capacity for all data, the high traffic may cause service unavailable problem.
+Although our system has enough capacity, the high traffic may cause service unavailable problem.
 
-We might need a queue system to buffer the comming request, and digest them.
+We might need a queue system to buffer the comming request, and digest them one by one.
 
 ```
                                                  | ---- data store 1
