@@ -25,7 +25,7 @@ namespace HighspotExercise
             this.MaxPlaylistId = maxPlaylistId;
                
         }
-                public int MaxPlaylistId { get; private set;}
+        public int MaxPlaylistId { get; private set;}
 
         public IngestionHandler()
         {
